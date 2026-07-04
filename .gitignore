@@ -1,0 +1,5 @@
+# local live state — not part of the repo
+hydra_registry
+hydra_created
+*.log
+.DS_Store
