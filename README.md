@@ -97,9 +97,27 @@ Edit `purpose_for()` in that script to set each coordinator's seed prompt.
 | command                | effect                                                              |
 |------------------------|--------------------------------------------------------------------|
 | `hydra-ls`             | show registry + created + live tmux sessions                        |
+| `hydra <name> "<msg>"` | one-shot: send a message to coordinator `<name>`, print reply (no TTY) |
+| `hydra-send <name> "<msg>"` | same one-shot send, explicit (resume-by-name via `hermes chat -c`) |
+| `hydra-tail`           | live-tail Hermes' conversation log (`~/.hermes/logs/agent.log`)     |
+| `hydra-pin <name>` / `hydra-pin --all` | courtesy keep-warm ping (Hermes doesn't daily-reset; for argus parity) |
+| `hydra-seed`           | bulk-create every registered coordinator (alias for `create_hydra_sessions.sh`) |
 | `hydra-finalize <name>`| title the newest session to `<name>` + mark created (manual trigger)|
 | `hydra-mark <name>`    | mark a name created without renaming                                |
 | `hydra-kill <name>`    | tear down the tmux window (Hermes session survives, still resumable)|
+
+### Symmetric with argus
+
+`hydra` and [`argus`](https://github.com/rick-stevens-ai/argus) (the OpenClaw
+analog) share the **same command surface** so muscle memory transfers between
+Hermes and OpenClaw: `X <name>`, `X <name> "msg"`, `X-send`, `X-ls`, `X-tail`,
+`X-kill`, `X-pin`, `X-seed`, `X-finalize`, `X-mark`. Where a helper is intrinsic
+to one runtime's limitation, the other keeps a same-named no-op stub explaining
+why it is unnecessary. `hydra-finalize`/`hydra-mark` are real here (Hermes `-c`
+is resume-only + the two-file state model); on argus they are no-op stubs
+(OpenClaw auto-creates + the store is the registry). `hydra-pin` is a courtesy
+ping here (Hermes doesn't daily-reset); on argus it is a real compact-in-place
+pin across OpenClaw's 4am reset.
 
 ---
 
