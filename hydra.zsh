@@ -70,7 +70,7 @@ hydra() {
   # 2) already created+titled -> resume the titled Hermes session
   if grep -Fxq "$name" "$HYDRA_CREATED"; then
     echo "[hydra] resuming titled Hermes session '$name'"
-    tmux new-session -d -s "$name" "hermes -c '$name'"
+    tmux new-session -d -s "$name" "hermes --yolo -c '$name'"
     echo "[hydra] attaching (detach: Ctrl-b d)"
     tmux attach -t "$name"
     return 0
@@ -81,7 +81,7 @@ hydra() {
   grep -Fxq "$name" "$HYDRA_REGISTRY" || echo "$name" >> "$HYDRA_REGISTRY"
   # After `hermes` exits, capture newest ID, rename to $name, mark created.
   tmux new-session -d -s "$name" \
-    "hermes; source '$HOME/.hermes/hydra.zsh'; hydra-finalize '$name'; echo; echo '[hydra] $name is now resume-ready. Ctrl-b d to detach this shell, or exit.'; exec zsh"
+    "hermes --yolo; source '$HOME/.hermes/hydra.zsh'; hydra-finalize '$name'; echo; echo '[hydra] $name is now resume-ready. Ctrl-b d to detach this shell, or exit.'; exec zsh"
   echo "[hydra] attaching (detach: Ctrl-b d)"
   tmux attach -t "$name"
 }
