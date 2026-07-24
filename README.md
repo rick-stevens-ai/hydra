@@ -105,6 +105,7 @@ Edit `purpose_for()` in that script to set each coordinator's seed prompt.
 | `hydra-finalize <name>`| title the newest session to `<name>` + mark created (manual trigger)|
 | `hydra-mark <name>`    | mark a name created without renaming                                |
 | `hydra-kill <name>`    | tear down the tmux window (Hermes session survives, still resumable)|
+| `hydra-help` / `hydra --help` | print the full command surface                              |
 
 ### Symmetric with argus
 

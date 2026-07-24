@@ -28,9 +28,41 @@
 #   hydra-finalize <name> title the newest session to <name> + mark created (manual trigger)
 #   hydra-mark <name>     just mark a name as created (no rename)
 #   hydra-kill <name>     tear down the tmux window (Hermes session survives, resumable)
+#   hydra-help            show the full command surface (also: hydra --help)
 
 HYDRA_REGISTRY="$HOME/.hermes/hydra_registry"
 HYDRA_CREATED="$HOME/.hermes/hydra_created"
+
+# print the full hydra command surface
+hydra-help() {
+  cat <<'EOF'
+hydra — launch/attach labeled, resumable Hermes coordinator sessions in tmux.
+
+USAGE
+  hydra <name>                 attach/resume a coordinator TUI (in tmux) for <name>
+                               (spawns + auto-titles a new Hermes session if needed)
+  hydra <name> "<msg>"         one-shot: send <msg> to <name>, print reply (no TTY)
+  hydra --help | -h | --h      show this help
+
+COMMANDS
+  hydra <name>                 attach if live / resume if created / else spawn-new
+  hydra <name> "<msg>"         send a one-shot message and print the reply
+  hydra-send <name> "<msg>"    fire a message to a coordinator (one-shot)
+  hydra-ls                     list registry + created + live tmux sessions
+  hydra-tail                   live-tail Hermes' conversation log
+  hydra-kill <name>            tear down the tmux window (Hermes session survives)
+  hydra-pin <name> | --all     courtesy keep-warm ping (Hermes doesn't daily-reset)
+  hydra-seed                   bulk-create every registered coordinator w/ a purpose prompt
+  hydra-finalize <name>        title the newest session to <name> + mark created
+  hydra-mark <name>            mark a name created without renaming
+  hydra-help                   show this help
+
+ENVIRONMENT
+  HYDRA_REGISTRY   intended-coordinators file (default: ~/.hermes/hydra_registry)
+  HYDRA_CREATED    created (resume-mode) names  (default: ~/.hermes/hydra_created)
+  HYDRA_MAX_TURNS  turn cap for one-shot sends   (default: 30)
+EOF
+}
 
 # capture newest session ID (first data row of `hermes sessions list`, last column)
 _hydra_newest_id() {
@@ -54,8 +86,15 @@ hydra-finalize() {
 
 hydra() {
   local name="$1"; shift 2>/dev/null
+  case "$name" in
+    -h|--h|--help|help)
+      hydra-help
+      return 0
+      ;;
+  esac
   if [ -z "$name" ]; then
     echo "usage: hydra <name> [\"message\"]   (known: $(tr '\n' ' ' < "$HYDRA_REGISTRY" 2>/dev/null))"
+    echo "       hydra --help   for the full command list"
     return 1
   fi
   touch "$HYDRA_REGISTRY" "$HYDRA_CREATED"
